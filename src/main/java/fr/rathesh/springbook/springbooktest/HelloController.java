@@ -18,19 +18,23 @@ import java.util.Map;
 public class HelloController {
     private OkHttpClient client = new OkHttpClient();
     private Map<String, Pokemon> cachePokemon = new HashMap<>();
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    public HelloController()  {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @RequestMapping("/")
     public String index() {
         return "Hello World !";
     }
+
     @RequestMapping("/espece/{pokemon}")
     public Pokemon getInfos(@PathVariable String pokemon) throws IOException {
         if ( cachePokemon.get(pokemon) != null)
         {
             return cachePokemon.get(pokemon);
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         Request request = new Request.Builder()
                 .url("https://pokeapi.co/api/v2/pokemon/"+pokemon)
