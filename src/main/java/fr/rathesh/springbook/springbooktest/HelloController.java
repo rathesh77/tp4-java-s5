@@ -2,10 +2,8 @@ package fr.rathesh.springbook.springbooktest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -13,6 +11,7 @@ import okhttp3.Response;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @RestController
 public class HelloController {
@@ -46,4 +45,20 @@ public class HelloController {
 
         return mappedPokemon;
     }
+
+    @RequestMapping("/pokemon")
+    public Map<String,Pokemon> getListPokemons(){
+
+        return cachePokemon;
+    }
+
+    @PostMapping(value= "/pokemon",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public Map<String,Pokemon> createPokemon(@RequestBody Pokemon pokemon){
+        System.out.println(pokemon);
+        cachePokemon.put(pokemon.getName(),pokemon);
+        return cachePokemon;
+    }
+
 }
