@@ -35,20 +35,15 @@ public class HelloController {
         {
             return cachePokemon.get(pokemon);
         }
+
         Request request = new Request.Builder()
                 .url("https://pokeapi.co/api/v2/pokemon/"+pokemon)
                 .build();
         Response response = client.newCall(request).execute();
 
-        // On sait pas pourquoi mais ça marche mieux avec ça
-        try {
-            Thread.sleep(5 * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Pokemon mappedPokemon = objectMapper.readValue(response.body().string(), Pokemon.class);
+        cachePokemon.put(pokemon,mappedPokemon);
 
-        Pokemon pokemonLu = objectMapper.readValue(response.body().charStream(), Pokemon.class);
-        cachePokemon.put(pokemon, pokemonLu);
-        return pokemonLu;
+        return mappedPokemon;
     }
 }
